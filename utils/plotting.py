@@ -23,8 +23,11 @@ def plot_price_and_signals(results, ticker):
 
 def plot_portfolio(results, ticker):
     plt.figure(figsize=(12, 6))
-    plt.plot(results.index, results['portfolio_value'], label='Portfolio Value')
-    plt.title(f'{ticker} Portfolio Value Over Time')
+
+    plt.plot(results.index, results['portfolio_value'], label='Strategy')
+    plt.plot(results.index, results['benchmark_value'], label='Buy & Hold')
+
+    plt.title(f'{ticker} Strategy vs Buy & Hold')
     plt.xlabel('Date')
     plt.ylabel('Portfolio Value')
     plt.legend()

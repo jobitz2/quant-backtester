@@ -8,22 +8,19 @@ from utils.plotting import plot_price_and_signals, plot_portfolio
 
 def main():
     stock_data = download_multiple_stocks(TICKERS, START_DATE, END_DATE)
+    for ticker in stock_data:
+        data = stock_data[ticker]
 
-    ticker = 'AAPL'
-    data = stock_data[ticker]
+        strategy = MovingAverageCrossoverStrategy(SHORT_WINDOW, LONG_WINDOW)
+        signals = strategy.generate_signals(data)
 
-    print(data.columns)
-    print(data.head())
-    
-    strategy = MovingAverageCrossoverStrategy(SHORT_WINDOW, LONG_WINDOW)
-    signals = strategy.generate_signals(data)
+        backtester = Backtester(INITIAL_CASH)
+        results = backtester.run(signals)
 
-    backtester = Backtester(INITIAL_CASH)
-    results = backtester.run(signals)
-
-    print_metrics(results)
-    plot_price_and_signals(results, ticker)
-    plot_portfolio(results, ticker)
+        print_metrics(results)
+        plot_price_and_signals(results, ticker)
+        plot_portfolio(results, ticker)
+        print_metrics(results)
 
 
 if __name__ == '__main__':

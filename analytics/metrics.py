@@ -24,13 +24,12 @@ def max_drawdown(portfolio_values):
 
 def print_metrics(results):
     portfolio_values = results['portfolio_value']
+    benchmark_values = results['benchmark_value']
     daily_returns = results['daily_return']
 
-    strategy_total_return = total_return(portfolio_values)
-    strategy_sharpe = sharpe_ratio(daily_returns)
-    strategy_max_drawdown = max_drawdown(portfolio_values)
+    strategy_return = total_return(portfolio_values)
+    benchmark_return = total_return(benchmark_values)
 
-    print('\nStrategy Performance')
-    print(f'Total Return: {strategy_total_return:.2%}')
-    print(f'Sharpe Ratio: {strategy_sharpe:.2f}')
-    print(f'Max Drawdown: {strategy_max_drawdown:.2%}')
+    print('\nStrategy vs Benchmark')
+    print(f'Strategy Return: {strategy_return:.2%}')
+    print(f'Benchmark Return: {benchmark_return:.2%}')
