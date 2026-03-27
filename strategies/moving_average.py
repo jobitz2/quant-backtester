@@ -9,8 +9,7 @@ class MovingAverageCrossoverStrategy(BaseStrategy):
 
     def generate_signals(self, data):
         signals = data.copy()
-
-        # 🔥 EMA instead of SMA
+        
         signals['short_ma'] = \
             signals['Close'].ewm(span=self.short_window, adjust=False).mean()
 
