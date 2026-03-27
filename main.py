@@ -18,7 +18,7 @@
 #         results = backtester.run(signals)
 
 #         print_metrics(results)
-#         plot_price_and_signals(results, ticker)
+#         ma_plot_price_and_signals(results, ticker)
 #         plot_portfolio(results, ticker)
 #         print_metrics(results)
 
@@ -53,7 +53,6 @@ def main():
 
         print_metrics(results)
         mm_plot_price_and_signals(results, ticker) #plots momentum method
-        #ma_plot_price_and_signals(results, ticker) #plots moving avg method
         plot_portfolio(results, ticker)
         print_metrics(results)
 
