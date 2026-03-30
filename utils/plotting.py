@@ -32,9 +32,9 @@ def mm_plot_price_and_signals(results, ticker):
 
     if 'moving_average' in results.columns:
         plt.plot(results.index, results['moving_average'], label='Moving Average')
-    print(results[results['position_change']])
-    buy_signals = results[results['position_change'] == 2]
-    sell_signals = results[results['position_change'] == -2]
+
+    buy_signals = results[results['position_change'] == 1]
+    sell_signals = results[results['position_change'] == -1]
 
     plt.scatter(buy_signals.index, buy_signals['Close'], marker='^', label='Buy')
     plt.scatter(sell_signals.index, sell_signals['Close'], marker='v', label='Sell')

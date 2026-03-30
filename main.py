@@ -27,12 +27,14 @@
 #     main()
 from config import \
     TICKERS, START_DATE, END_DATE, INITIAL_CASH, \
-    MOMENTUM_WINDOW, MOMENTUM_BUY_THRESHOLD, MOMENTUM_SELL_THRESHOLD
+    MOMENTUM_WINDOW, MOMENTUM_BUY_THRESHOLD, MOMENTUM_SELL_THRESHOLD,\
+    MOMENTUM_TREND_WINDOW
 from data.downloader import download_multiple_stocks
 from strategies.momentum import MomentumStrategy
 from backtesting.backtester import Backtester
 from analytics.metrics import print_metrics
 from utils.plotting import ma_plot_price_and_signals, mm_plot_price_and_signals, plot_portfolio
+from optimizer import optimize_momentum_strategy
 
 
 def main():
@@ -41,11 +43,15 @@ def main():
     for ticker in stock_data:
         data = stock_data[ticker]
 
+        best = optimize_momentum_strategy(data, INITIAL_CASH)
+
         strategy = MomentumStrategy(
-            MOMENTUM_WINDOW,
-            MOMENTUM_BUY_THRESHOLD,
-            MOMENTUM_SELL_THRESHOLD
+            best['window'],
+            best['buy_threshold'],
+            best['sell_threshold'],
+            best['trend_window']
         )
+        
         signals = strategy.generate_signals(data)
 
         backtester = Backtester(INITIAL_CASH)
