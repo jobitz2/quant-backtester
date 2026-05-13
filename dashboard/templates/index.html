@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PEAD Live Trader</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0f1117;
+      color: #e0e0e0;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      padding: 24px;
+    }
+
+    h1 { font-size: 20px; color: #fff; margin-bottom: 4px; }
+    h2 { font-size: 13px; color: #888; font-weight: normal; margin-bottom: 16px; }
+    h3 { font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+
+    .header {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .badge.dry  { background: #2a3a2a; color: #5faf5f; border: 1px solid #3a5a3a; }
+    .badge.live { background: #3a1a1a; color: #cf6060; border: 1px solid #5a2a2a; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: #1a1d27;
+      border: 1px solid #2a2d3a;
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .stat-label { font-size: 11px; color: #666; margin-bottom: 6px; }
+    .stat-value { font-size: 22px; color: #fff; }
+    .stat-value.green { color: #5faf5f; }
+    .stat-value.red   { color: #cf6060; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+    }
+    th {
+      text-align: left;
+      color: #555;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0 8px 8px 0;
+      border-bottom: 1px solid #2a2d3a;
+    }
+    td {
+      padding: 8px 8px 8px 0;
+      border-bottom: 1px solid #1e2130;
+      color: #ccc;
+    }
+    tr:last-child td { border-bottom: none; }
+    .green { color: #5faf5f; }
+    .red   { color: #cf6060; }
+    .dim   { color: #555; }
+
+    .progress-bar {
+      background: #2a2d3a;
+      border-radius: 3px;
+      height: 4px;
+      width: 80px;
+      margin-top: 4px;
+    }
+    .progress-fill {
+      background: #4a7fff;
+      border-radius: 3px;
+      height: 4px;
+    }
+
+    .section { margin-bottom: 32px; }
+
+    .action-tag {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+    .tag-BUY    { background: #1a3a1a; color: #5faf5f; }
+    .tag-SELL   { background: #3a1a1a; color: #cf6060; }
+    .tag-SIGNAL { background: #1a2a3a; color: #4a9fff; }
+    .tag-RUN    { background: #2a2a1a; color: #afaf5f; }
+    .tag-SCAN   { background: #1e1e2a; color: #666; }
+    .tag-SKIP   { background: #1e1e2a; color: #555; }
+    .tag-SELL_MISS { background: #3a2a1a; color: #af7f4f; }
+
+    .refresh-note {
+      font-size: 11px;
+      color: #444;
+      text-align: right;
+      margin-top: -16px;
+      margin-bottom: 24px;
+    }
+
+    .empty { color: #444; padding: 12px 0; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>PEAD Live Trader</h1>
+  <span id="mode-badge" class="badge">—</span>
+</div>
+
+<div class="grid" id="summary-cards">
+  <div class="card"><div class="stat-label">Starting Cash</div><div class="stat-value" id="s-cash">—</div></div>
+  <div class="card"><div class="stat-label">Open Positions</div><div class="stat-value" id="s-pos">—</div></div>
+  <div class="card"><div class="stat-label">Qualified Tickers</div><div class="stat-value" id="s-qual">—</div></div>
+  <div class="card"><div class="stat-label">Unrealized P&L</div><div class="stat-value" id="s-pnl">—</div></div>
+  <div class="card"><div class="stat-label">Last Run</div><div class="stat-value" style="font-size:13px" id="s-last">—</div></div>
+</div>
+
+<div class="refresh-note" id="refresh-note">refreshing every 60s</div>
+
+<!-- Open Positions -->
+<div class="section">
+  <h3>Open Positions</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Ticker</th>
+        <th>Entry Date</th>
+        <th>Days Held</th>
+        <th>Allocated</th>
+        <th>Entry Price</th>
+        <th>Current Price</th>
+        <th>Current Value</th>
+        <th>P&L</th>
+        <th>P&L %</th>
+      </tr>
+    </thead>
+    <tbody id="positions-body"><tr><td colspan="9" class="empty">Loading...</td></tr></tbody>
+  </table>
+</div>
+
+<!-- Qualified Tickers -->
+<div class="section">
+  <h3>Qualified Tickers</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Ticker</th>
+        <th>Alpha vs B&H</th>
+        <th>Sharpe</th>
+        <th>Surprise Threshold</th>
+        <th>Hold Days</th>
+        <th>Strategy Return</th>
+        <th>B&H Return</th>
+      </tr>
+    </thead>
+    <tbody id="qualified-body"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+  </table>
+</div>
+
+<!-- Activity Log -->
+<div class="section">
+  <h3>Activity Log</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Action</th>
+        <th>Ticker</th>
+        <th>Details</th>
+        <th>Mode</th>
+      </tr>
+    </thead>
+    <tbody id="activity-body"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody>
+  </table>
+</div>
+
+<script>
+  function fmt(val, prefix='$', decimals=2) {
+    if (val == null) return '<span class="dim">—</span>';
+    return prefix + val.toFixed(decimals);
+  }
+
+  function pnlClass(val) {
+    if (val == null) return '';
+    return val >= 0 ? 'green' : 'red';
+  }
+
+  function pnlFmt(val, suffix='') {
+    if (val == null) return '<span class="dim">—</span>';
+    const sign = val >= 0 ? '+' : '';
+    return `<span class="${pnlClass(val)}">${sign}${val.toFixed(2)}${suffix}</span>`;
+  }
+
+  async function loadSummary() {
+    const [sumRes, posRes] = await Promise.all([
+      fetch('/api/summary').then(r => r.json()),
+      fetch('/api/positions').then(r => r.json()),
+    ]);
+
+    const badge = document.getElementById('mode-badge');
+    badge.textContent = sumRes.dry_run ? 'DRY RUN' : 'LIVE';
+    badge.className   = 'badge ' + (sumRes.dry_run ? 'dry' : 'live');
+
+    document.getElementById('s-cash').textContent = '$' + sumRes.initial_cash.toLocaleString();
+    document.getElementById('s-pos').textContent  = sumRes.num_positions;
+    document.getElementById('s-qual').textContent = sumRes.num_qualified;
+    document.getElementById('s-last').textContent = sumRes.last_run ? sumRes.last_run.replace('T', ' ') : 'Never';
+
+    const pnl = posRes.total_pnl;
+    const pnlEl = document.getElementById('s-pnl');
+    pnlEl.textContent  = (pnl >= 0 ? '+$' : '-$') + Math.abs(pnl).toFixed(2);
+    pnlEl.className    = 'stat-value ' + pnlClass(pnl);
+  }
+
+  async function loadPositions() {
+    const data = await fetch('/api/positions').then(r => r.json());
+    const body = document.getElementById('positions-body');
+
+    if (!data.positions.length) {
+      body.innerHTML = '<tr><td colspan="9" class="empty">No open positions.</td></tr>';
+      return;
+    }
+
+    body.innerHTML = data.positions.map(p => {
+      const pct = Math.min((p.days_held / p.hold_target) * 100, 100);
+      return `
+        <tr>
+          <td><strong>${p.ticker}</strong></td>
+          <td>${p.entry_date}</td>
+          <td>
+            ${p.days_held}/${p.hold_target}d
+            <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+          </td>
+          <td>${fmt(p.allocated)}</td>
+          <td>${fmt(p.entry_price)}</td>
+          <td>${p.current_price != null ? fmt(p.current_price) : '<span class="dim">—</span>'}</td>
+          <td>${p.current_value != null ? fmt(p.current_value) : '<span class="dim">—</span>'}</td>
+          <td>${pnlFmt(p.pnl)}</td>
+          <td>${pnlFmt(p.pnl_pct, '%')}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  async function loadQualified() {
+    const data = await fetch('/api/qualified').then(r => r.json());
+    const body = document.getElementById('qualified-body');
+
+    if (!data.length) {
+      body.innerHTML = '<tr><td colspan="7" class="empty">No qualified tickers. Run main.py first.</td></tr>';
+      return;
+    }
+
+    body.innerHTML = data.map(q => `
+      <tr>
+        <td><strong>${q.ticker}</strong></td>
+        <td class="${q.alpha >= 0 ? 'green' : 'red'}">${q.alpha >= 0 ? '+' : ''}${(q.alpha * 100).toFixed(1)}%</td>
+        <td>${q.sharpe.toFixed(2)}</td>
+        <td>${(q.threshold * 100).toFixed(0)}%</td>
+        <td>${q.hold_days}d</td>
+        <td>${(q.strat_return * 100).toFixed(1)}%</td>
+        <td>${(q.bench_return * 100).toFixed(1)}%</td>
+      </tr>`
+    ).join('');
+  }
+
+  async function loadActivity() {
+    const data = await fetch('/api/activity').then(r => r.json());
+    const body = document.getElementById('activity-body');
+
+    if (!data.length) {
+      body.innerHTML = '<tr><td colspan="5" class="empty">No activity yet. Run live_trader.py first.</td></tr>';
+      return;
+    }
+
+    body.innerHTML = data.map(e => `
+      <tr>
+        <td class="dim">${e.timestamp.replace('T', ' ')}</td>
+        <td><span class="action-tag tag-${e.action}">${e.action}</span></td>
+        <td>${e.ticker || '<span class="dim">—</span>'}</td>
+        <td class="dim">${e.details}</td>
+        <td class="dim">${e.dry_run ? 'dry run' : 'live'}</td>
+      </tr>`
+    ).join('');
+  }
+
+  function refreshAll() {
+    loadSummary();
+    loadPositions();
+    loadQualified();
+    loadActivity();
+    const now = new Date().toLocaleTimeString();
+    document.getElementById('refresh-note').textContent = `last refreshed ${now} · refreshing every 60s`;
+  }
+
+  refreshAll();
+  setInterval(refreshAll, 60000);
+</script>
+</body>
+</html>

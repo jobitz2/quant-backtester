@@ -1,0 +1,102 @@
+[
+  {
+    "ticker": "SCHW",
+    "skip": false,
+    "strat_return": 2.603012039863126,
+    "bench_return": 0.6478438645521492,
+    "alpha": 1.9551681753109766,
+    "sharpe": 1.3052889288593508,
+    "threshold": 0.02,
+    "hold_days": 60
+  },
+  {
+    "ticker": "SLB",
+    "skip": false,
+    "strat_return": 1.5999153402177577,
+    "bench_return": 0.06563840085488204,
+    "alpha": 1.5342769393628757,
+    "sharpe": 0.9991881641715645,
+    "threshold": 0.05,
+    "hold_days": 30
+  },
+  {
+    "ticker": "WFC",
+    "skip": false,
+    "strat_return": 1.954643347700837,
+    "bench_return": 0.49278067707847595,
+    "alpha": 1.461862670622361,
+    "sharpe": 1.3838980928179097,
+    "threshold": 0.1,
+    "hold_days": 30
+  },
+  {
+    "ticker": "VLO",
+    "skip": false,
+    "strat_return": 1.9787920211293955,
+    "bench_return": 0.5958980088912895,
+    "alpha": 1.382894012238106,
+    "sharpe": 0.9279752590591505,
+    "threshold": 0.05,
+    "hold_days": 30
+  },
+  {
+    "ticker": "NEM",
+    "skip": false,
+    "strat_return": 1.3535118907210086,
+    "bench_return": 0.00923525748057652,
+    "alpha": 1.3442766332404321,
+    "sharpe": 1.190799707329797,
+    "threshold": 0.08,
+    "hold_days": 60
+  },
+  {
+    "ticker": "COF",
+    "skip": false,
+    "strat_return": 2.1591877388480194,
+    "bench_return": 0.8839149549315679,
+    "alpha": 1.2752727839164515,
+    "sharpe": 1.3197636482060964,
+    "threshold": 0.1,
+    "hold_days": 60
+  },
+  {
+    "ticker": "C",
+    "skip": false,
+    "strat_return": 1.1469059064735712,
+    "bench_return": 0.048672840442007814,
+    "alpha": 1.0982330660315633,
+    "sharpe": 1.0398065332556405,
+    "threshold": 0.15,
+    "hold_days": 30
+  },
+  {
+    "ticker": "INTC",
+    "skip": false,
+    "strat_return": 0.41832724217740225,
+    "bench_return": -0.626396104558455,
+    "alpha": 1.0447233467358572,
+    "sharpe": 0.5023264151260808,
+    "threshold": 0.15,
+    "hold_days": 30
+  },
+  {
+    "ticker": "COP",
+    "skip": false,
+    "strat_return": 1.6242512217735818,
+    "bench_return": 0.8235769447023074,
+    "alpha": 0.8006742770712745,
+    "sharpe": 1.2509227146680002,
+    "threshold": 0.08,
+    "hold_days": 60
+  },
+  {
+    "ticker": "TFC",
+    "skip": false,
+    "strat_return": 0.7186219647583882,
+    "bench_return": -0.03732107452136002,
+    "alpha": 0.7559430392797483,
+    "sharpe": 0.8225117526292094,
+    "threshold": 0.02,
+    "hold_days": 20
+  }
+]

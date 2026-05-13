@@ -2,3 +2,5 @@ pandas
 numpy
 matplotlib
 yfinance
+robin_stocks
+flask

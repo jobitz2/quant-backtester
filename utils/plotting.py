@@ -46,6 +46,47 @@ def mm_plot_price_and_signals(results, ticker):
     plt.grid(True)
     plt.show()
 
+def drift_plot_price_and_signals(results, ticker):
+    plt.figure(figsize=(12, 6))
+    plt.plot(results.index, results['Close'], label='Close Price')
+
+    if 'short_ma' in results.columns:
+        plt.plot(results.index, results['short_ma'], label='Short MA')
+
+    if 'long_ma' in results.columns:
+        plt.plot(results.index, results['long_ma'], label='Long MA')
+
+    if 'moving_average' in results.columns:
+        plt.plot(results.index, results['moving_average'], label='Moving Average')
+
+    if 'trend_ma' in results.columns:
+        plt.plot(results.index, results['trend_ma'], label='Trend MA')
+
+    buy_signals = results[results['position_change'] > 0]
+    sell_signals = results[results['position_change'] < 0]
+
+    plt.scatter(buy_signals.index, buy_signals['Close'], marker='^', label='Buy')
+    plt.scatter(sell_signals.index, sell_signals['Close'], marker='v', label='Sell')
+
+    plt.title(f'{ticker} Price and Signals')
+    plt.xlabel('Date')
+    plt.ylabel('Price')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+def plot_portfolio_combined(portfolio_df, tickers):
+    plt.figure(figsize=(14, 6))
+    plt.plot(portfolio_df.index, portfolio_df['portfolio_value'], label='PEAD Portfolio', linewidth=2)
+    plt.plot(portfolio_df.index, portfolio_df['benchmark_value'], label='Equal-Weight B&H', linewidth=2, linestyle='--')
+
+    plt.title(f'PEAD Portfolio vs Equal-Weight Buy & Hold ({", ".join(tickers)})')
+    plt.xlabel('Date')
+    plt.ylabel('Portfolio Value ($)')
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
 
 def plot_portfolio(results, ticker):
     plt.figure(figsize=(12, 6))
